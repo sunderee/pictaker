@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:pictaker/ui/widgets/shutter_button.widget.dart';
 import 'package:pictaker/utils/build_context.ext.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
     _controller = CameraController(
       widget.availableCameras.first,
       ResolutionPreset.medium,
@@ -45,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
     _controller?.dispose();
     super.dispose();
   }
@@ -53,6 +52,40 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.photo_library),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final isBack = _controller?.description.lensDirection ==
+                  CameraLensDirection.back;
+              final newCameraDescription = widget.availableCameras.firstWhere(
+                  (CameraDescription element) => isBack
+                      ? element.lensDirection == CameraLensDirection.front
+                      : element.lensDirection == CameraLensDirection.back);
+              _controller = CameraController(
+                newCameraDescription,
+                ResolutionPreset.medium,
+              );
+              await _controller?.initialize();
+              if (mounted) {
+                setState(() {});
+              }
+            },
+            icon: Icon(
+              _controller?.description.lensDirection == CameraLensDirection.back
+                  ? Icons.camera_rear
+                  : Icons.camera_front,
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder<void>(
         future: _cameraControllerInitializer,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -70,7 +103,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ? Transform.scale(
                     scale: scale,
                     child: Center(
-                      child: CameraPreview(_controller!),
+                      child: Stack(
+                        children: [
+                          CameraPreview(_controller!),
+                          Positioned.fill(
+                            bottom: -MediaQuery.of(context).size.height / 2,
+                            child: ShutterButtonWidget(
+                              onPressed: () {},
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 : const SizedBox();
