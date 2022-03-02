@@ -5,7 +5,6 @@ import 'package:pictaker/ui/app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final cameras = await availableCameras();
-  print('CAMERAS: ${cameras.map((e) => e.toString())}');
 
   runApp(App(availableCameras: cameras));
 }
