@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pictaker/ui/screens/home.screen.dart';
+import 'package:pictaker/ui/home.screen.dart';
 
 class App extends StatelessWidget {
   final List<CameraDescription> availableCameras;
