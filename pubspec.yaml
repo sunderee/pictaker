@@ -1,5 +1,5 @@
 name: pictaker
-description: Playing around with camera plugin on Flutter
+description: Playing around with camera and file_picker plugins
 
 publish_to: 'none'
 version: 1.0.0+1
