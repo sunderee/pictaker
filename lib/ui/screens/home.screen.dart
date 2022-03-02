@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:pictaker/ui/widgets/shutter_button.widget.dart';
 import 'package:pictaker/utils/build_context.ext.dart';
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () async => await _pickPhotoFromGallery(),
           icon: const Icon(Icons.photo_library),
         ),
         actions: [
@@ -109,7 +110,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           Positioned.fill(
                             bottom: -MediaQuery.of(context).size.height / 2,
                             child: ShutterButtonWidget(
-                              onPressed: () {},
+                              onPressed: () async =>
+                                  await _takePhotoWithCamera(),
                             ),
                           ),
                         ],
@@ -135,7 +137,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
 
     _controller?.addListener(() {
-      if (mounted) setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
       if (_controller?.value.hasError ?? true) {
         context.showCustomSnackBar('Failed to open device camera');
       }
@@ -152,5 +156,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Future<void> _takePhotoWithCamera() async {
+    final file = await _controller?.takePicture();
+    context.showCustomSnackBar(
+      file?.name ?? 'Did not take a photo at all :(',
+    );
+  }
+
+  Future<void> _pickPhotoFromGallery() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    context.showCustomSnackBar(
+      result?.files.first.name ?? 'You did not pick any photo :(',
+    );
   }
 }
