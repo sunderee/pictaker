@@ -1,16 +1,11 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
-  exclude:
-    - "build/**"
-  errors:
-    undefined_prefixed_name: ignore
+  exclude: "build/**"
   language:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
-  strong-mode:
-    implicit-dynamic: false
 
 linter:
   rules:
